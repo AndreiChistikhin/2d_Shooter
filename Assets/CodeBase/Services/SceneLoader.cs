@@ -10,6 +10,8 @@ namespace CodeBase.Services
     public class SceneLoader : ISceneLoader
     {
         private LoadingCurtain _loadingCurtain;
+
+        public LoadingCurtain LoadingCurtain => _loadingCurtain;
         
         public SceneLoader(LoadingCurtain loadingCurtain)
         {
@@ -28,8 +30,7 @@ namespace CodeBase.Services
             _loadingCurtain.Show();
         
             await loadSceneAsync.ToUniTask();
-        
-            _loadingCurtain.Hide().Forget();
+            
             onLoaded?.Invoke();
         }
     }

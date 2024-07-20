@@ -9,11 +9,6 @@ namespace CodeBase.Architecture
         [SerializeField] private CanvasGroup _loadingCurtain;
         [SerializeField] private float _fadeOutDurationInSeconds;
         
-        private void Awake()
-        {
-            DontDestroyOnLoad(this);
-        }
-
         public void Show()
         {
             gameObject.SetActive(true);

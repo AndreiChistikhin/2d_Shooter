@@ -14,6 +14,7 @@ namespace CodeBase.Architecture
         {
             InstallLoadingObjects();
             InstallServices();
+            InstallFactories();
         }
 
         private void InstallLoadingObjects()
@@ -25,44 +26,17 @@ namespace CodeBase.Architecture
         {
             Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
             Container.Bind<IStateMachine>().To<GameStateMachine>().AsSingle();
-            Container.Bind<IGameFactory>().To<GameFactory>().AsSingle();
             Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle();
             Container.Bind<IInputService>().To<InputService>().AsSingle();
             Container.Bind<IStaticData>().To<StaticData>().AsSingle();
+            Container.Bind<IPopUpService>().To<PopUpService>().AsSingle();
+        }
+
+        private void InstallFactories()
+        {
             Container.Bind<IUIFactory>().To<UIFactory>().AsSingle();
-            Container.Bind<IWindowService>().To<WindowService>().AsSingle();
+            Container.Bind<IGameFactory>().To<GameFactory>().AsSingle();
+            Container.Bind<IStateFactory>().To<StateFactory>().AsSingle();
         }
     }
-}
-
-public class InputService : IInputService
-{
-}
-
-public interface IInputService
-{
-}
-
-public class WindowService : IWindowService
-{
-}
-
-public interface IWindowService
-{
-}
-
-public class UIFactory : IUIFactory
-{
-}
-
-public interface IUIFactory
-{
-}
-
-public class GameFactory : IGameFactory
-{
-}
-
-public interface IGameFactory
-{
 }

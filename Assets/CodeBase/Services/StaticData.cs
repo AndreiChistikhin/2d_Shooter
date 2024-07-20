@@ -15,20 +15,25 @@ namespace CodeBase.Services
             _assetProvider = assetProvider;
         }
 
-        public async UniTask<PlayerConfig> ForPlayer()
+        public async UniTask<PlayerConfig> GetPlayerStaticData()
         {
             return await _assetProvider.Load<PlayerConfig>(AssetAddress.PlayerConfig);
         }
 
-        public async UniTask<EnemyConfig> ForSpawners()
+        public async UniTask<EnemyConfig> GetEnemyStaticData()
         {
             return await _assetProvider.Load<EnemyConfig>(AssetAddress.EnemyConfig);
         }
-
-        public async UniTask<WindowParameters> ForWindow(WindowId windowId)
+        
+        public async UniTask<WorldConfig> GetWorldStaticData()
         {
-            WindowConfig windowConfig = await _assetProvider.Load<WindowConfig>(AssetAddress.WindowConfig);
-            return windowConfig.Windows.FirstOrDefault(x => x.WindowId == windowId);
+            return await _assetProvider.Load<WorldConfig>(AssetAddress.WorldConfig);
+        }
+
+        public async UniTask<PopUpParameters> GetPopUpStaticData(PopUpId popUpId)
+        {
+            PopUpConfig popUpConfig = await _assetProvider.Load<PopUpConfig>(AssetAddress.WindowConfig);
+            return popUpConfig.PopUps.FirstOrDefault(x => x.PopUpId == popUpId);
         }
     }
 }

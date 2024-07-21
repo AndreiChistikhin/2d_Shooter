@@ -1,5 +1,4 @@
-﻿using System;
-using CodeBase.Services.Interfaces;
+﻿using CodeBase.Services.Interfaces;
 using CodeBase.UI;
 
 namespace CodeBase.Architecture.StateMachine.GameStates

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CodeBase.Configs;
 using CodeBase.UI;
 using Cysharp.Threading.Tasks;

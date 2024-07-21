@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using CodeBase.Configs;
+﻿using CodeBase.Configs;
+using CodeBase.GamePlay;
+using CodeBase.Services;
 using CodeBase.Services.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -11,14 +12,16 @@ namespace CodeBase.Architecture.StateMachine.GameStates
         private const string LevelSceneName = "Game";
         private readonly ISceneLoader _sceneLoader;
         private readonly IStateMachine _gameStateMachine;
-        private IGameFactory _factory;
-        private IUIFactory _uiFactory;
-        private IStaticData _staticData;
+        private readonly IKillsCounter _killsCounter;
+        private readonly IGameFactory _factory;
+        private readonly IUIFactory _uiFactory;
+        private readonly IStaticData _staticData;
 
         public LevelLoadState(ISceneLoader sceneLoader, IStaticData staticData, IGameFactory factory,
             IUIFactory uiFactory,
-            IStateMachine gameStateMachine)
+            IStateMachine gameStateMachine, IKillsCounter killsCounter)
         {
+            _killsCounter = killsCounter;
             _staticData = staticData;
             _sceneLoader = sceneLoader;
             _gameStateMachine = gameStateMachine;
@@ -28,7 +31,6 @@ namespace CodeBase.Architecture.StateMachine.GameStates
 
         public void Enter()
         {
-            _factory.ClearScene();
             _sceneLoader.LoadScene(LevelSceneName, OnLoaded);
         }
 
@@ -56,31 +58,37 @@ namespace CodeBase.Architecture.StateMachine.GameStates
             await InitHUD();
             await InitFinishLine();
             await InitSpawner();
+            await InitKillCounter();
         }
 
         private async UniTask InitPlayer()
         {
             PlayerConfig playerStaticData = await _staticData.GetPlayerStaticData();
-            _factory.CreatePlayer(playerStaticData.InitialPlayerPosition);
+            GameObject player = await _factory.CreatePlayer(playerStaticData.InitialPlayerPosition);
+            IHealth playerHealth = player.GetComponent<IHealth>();
+            playerHealth.Max = playerHealth.Current = playerStaticData.PlayerHealth;
         }
 
         private async UniTask InitHUD()
         {
-            GameObject HUD = await _factory.CreateHUD();
-            //Скорее всего надо будет проинджектить в DI Ihealth нашего перса
-            //HUD.GetComponentInChildren<ActorUI>().Construct(hero.GetComponent<IHealth>());
+            await _factory.CreateHUD();
         }
 
         private async UniTask InitFinishLine()
         {
             WorldConfig worldStaticData = await _staticData.GetWorldStaticData();
-            _factory.CreateFinishLine(new Vector3(0, worldStaticData.FinishLineYPosition, 0));
+            await _factory.CreateFinishLine(new Vector3(0, worldStaticData.FinishLineYPosition, 0));
         }
 
         private async UniTask InitSpawner()
         {
             WorldConfig worldStaticData = await _staticData.GetWorldStaticData();
-            _factory.CreateSpawnerGroup(new Vector3(0, worldStaticData.SpawnerLineYPosition, 0));
+            await _factory.CreateSpawnerGroup(new Vector3(0, worldStaticData.SpawnerLineYPosition, 0));
+        }
+
+        private async UniTask InitKillCounter()
+        {
+            await _killsCounter.ResetCounter();
         }
     }
 }

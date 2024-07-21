@@ -9,16 +9,13 @@ public class Spawner : MonoBehaviour
     private ObjectPool<EnemyMovement> _enemies;
 
     [Inject]
-    private void Construct(IStaticData staticData, IGameFactory gameFactory)
+    private void Construct(IGameFactory gameFactory)
     {
         _gameFactory = gameFactory;
     }
 
     public void GetEnemy()
     {
-        GameObject enemy = _gameFactory.Enemies.Get();
-        
-        enemy.transform.position = transform.position;
-        enemy.GetComponent<EnemyMovement>().Move();
+        _gameFactory.CreateEnemyWithPool(transform.position);
     }
 }

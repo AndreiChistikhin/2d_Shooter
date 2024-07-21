@@ -16,6 +16,6 @@ MonoBehaviour:
   MaxEnemiesAmountToWin: 35
   MinEnemiesSpawnTimeOut: 1
   MaxEnemiesSpawnTimeout: 3
-  MinEnemiesSpeed: 1
-  MaxEnemiesSpeed: 3
-  EnemiesHealth: 20
+  MinEnemiesSpeed: 0.5
+  MaxEnemiesSpeed: 1.5
+  EnemiesHealth: 10

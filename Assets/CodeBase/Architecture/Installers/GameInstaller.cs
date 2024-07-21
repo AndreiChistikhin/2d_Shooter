@@ -30,6 +30,7 @@ namespace CodeBase.Architecture
             Container.Bind<IInputService>().To<InputService>().AsSingle();
             Container.Bind<IStaticData>().To<StaticData>().AsSingle();
             Container.Bind<IPopUpService>().To<PopUpService>().AsSingle();
+            Container.Bind<IKillsCounter>().To<KillsCounter>().AsSingle();
         }
 
         private void InstallFactories()

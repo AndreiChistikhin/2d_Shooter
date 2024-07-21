@@ -7,6 +7,7 @@ namespace CodeBase.UI
 {
     public class PopUpBase : MonoBehaviour
     {
+        [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Button _playAgain;
         [SerializeField] private float _animationTimeInSeconds;
 
@@ -24,7 +25,7 @@ namespace CodeBase.UI
 
         public void Show()
         {
-            transform.DOMoveY(0, _animationTimeInSeconds).SetEase(Ease.OutBounce);
+            _rectTransform.DOAnchorPos(Vector2.zero, _animationTimeInSeconds).SetEase(Ease.OutBounce);
         }
 
         private void PlayAgain()
@@ -35,7 +36,7 @@ namespace CodeBase.UI
 
         private void Hide()
         {
-            transform.DOMoveY(Screen.height, _animationTimeInSeconds);
+            _rectTransform.DOAnchorPos(new Vector2(0, Screen.height), _animationTimeInSeconds);
         }
     }
 }

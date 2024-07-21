@@ -1,4 +1,5 @@
-﻿using CodeBase.Configs;
+﻿using System;
+using CodeBase.Configs;
 using CodeBase.Services.Interfaces;
 using CodeBase.UI;
 using UnityEngine;
@@ -8,6 +9,8 @@ namespace CodeBase.Services
     public class PopUpService : IPopUpService
     {
         private readonly IUIFactory _uiFactory;
+
+        public event Action OnPopUp;
         
         public PopUpService(IUIFactory uiFactory)
         {
@@ -36,6 +39,7 @@ namespace CodeBase.Services
             }
             
             popUp.Show();
+            OnPopUp?.Invoke();
         }
     }
 }

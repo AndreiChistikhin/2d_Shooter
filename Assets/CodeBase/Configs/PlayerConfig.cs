@@ -11,5 +11,6 @@ namespace CodeBase.Configs
         public float ShootingCoolDown;
         public int ShootingDamage;
         public float BulletSpeed;
+        public int PlayerHealth;
     }
 }

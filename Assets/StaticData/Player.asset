@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialPlayerPosition: {x: 0, y: -4, z: 0}
   PlayerMovementSpeed: 5
-  ShootingRadius: 2
+  ShootingRadius: 7
   ShootingCoolDown: 0.5
   ShootingDamage: 5
   BulletSpeed: 10
+  PlayerHealth: 5

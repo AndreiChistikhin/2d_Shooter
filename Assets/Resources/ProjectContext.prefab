@@ -75,3 +75,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _loadingCurtain: {fileID: 6501839910012098993, guid: 4d305e90e98b3b94e8126a58d90bf28a, type: 3}
+  _audioService: {fileID: 1790598296188698913, guid: d0e2c2f023cc48942958075308be4d54, type: 3}

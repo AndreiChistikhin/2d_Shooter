@@ -7,13 +7,13 @@ namespace CodeBase.GamePlay.BulletNameSpace
     public class Bullet : MonoBehaviour
     {
         [SerializeField] private float _bulletOnSceneMaxTime;
+        [SerializeField] private Rigidbody2D _rb;
 
         private IGameFactory _gameFactory;
         
         private float _bulletSpeed;
         private Vector3 _direction;
         private float _bulletDamage;
-
         private float _bulletOnSceneCurrentTime;
 
         public void Init(IGameFactory gameFactory, float bulletSpeed, Vector3 direction, float bulletDamage, Vector3 _initialPosition)
@@ -47,7 +47,8 @@ namespace CodeBase.GamePlay.BulletNameSpace
         public void StartMovement()
         {
             transform.up = _direction.normalized;
-            transform.DOMove(transform.position + _direction.normalized, _bulletSpeed).SetLoops(-1,LoopType.Incremental).SetSpeedBased().SetEase(Ease.Linear);
+
+            _rb.velocity = _direction.normalized * _bulletSpeed;
         }
 
         private void HideBullet()
@@ -57,9 +58,7 @@ namespace CodeBase.GamePlay.BulletNameSpace
             _gameFactory.ReleaseBullet(gameObject);
         }
 
-        private void StopMovement()
-        {
-            transform.DOKill();
-        }
+        private void StopMovement() =>
+            _rb.velocity = Vector2.zero;
     }
 }

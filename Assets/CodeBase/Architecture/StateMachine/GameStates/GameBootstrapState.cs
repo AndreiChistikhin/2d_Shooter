@@ -14,16 +14,12 @@ namespace CodeBase.Architecture.StateMachine.GameStates
             _gameStateMachine = gameStateMachine;
         }
 
-        public void Enter()
-        {
+        public void Enter() =>
             _sceneLoader.LoadScene(BootStrapSceneName, EnterLoadProgressState);
-        }
-        
+
         public void Exit() {}
 
-        private void EnterLoadProgressState()
-        {
+        private void EnterLoadProgressState() =>
             _gameStateMachine.Enter<LevelLoadState>();
-        }
     }
 }

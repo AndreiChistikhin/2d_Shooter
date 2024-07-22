@@ -25,9 +25,7 @@ namespace CodeBase.Architecture.StateMachine.GameStates
                 popUp.OnRestartPressed -= MoveToLevelLoadState;
         }
 
-        private void MoveToLevelLoadState()
-        {
+        private void MoveToLevelLoadState() =>
             _stateMachine.Enter<LevelLoadState>();
-        }
     }
 }

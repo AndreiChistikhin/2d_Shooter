@@ -7,9 +7,7 @@ namespace CodeBase.UI
     {
         [SerializeField] private TMP_Text _healthText;
 
-        public void SetHealthText(float hp)
-        {
+        public void SetHealthText(float hp) =>
             _healthText.text = $"Здоровье: {(int) hp}";
-        }
     }
 }

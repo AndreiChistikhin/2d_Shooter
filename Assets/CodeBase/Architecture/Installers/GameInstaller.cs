@@ -4,12 +4,13 @@ using CodeBase.Services.Interfaces;
 using UnityEngine;
 using Zenject;
 
-namespace CodeBase.Architecture
+namespace CodeBase.Architecture.Installers
 {
     public class GameInstaller : MonoInstaller
     {
         [SerializeField] private LoadingCurtain _loadingCurtain;
-    
+        [SerializeField] private AudioService _audioService;
+
         public override void InstallBindings()
         {
             InstallLoadingObjects();
@@ -20,6 +21,7 @@ namespace CodeBase.Architecture
         private void InstallLoadingObjects()
         {
             Container.Bind<LoadingCurtain>().FromComponentInNewPrefab(_loadingCurtain).AsSingle();
+            Container.Bind<AudioService>().FromComponentInNewPrefab(_audioService).AsSingle();
         }
 
         private void InstallServices()

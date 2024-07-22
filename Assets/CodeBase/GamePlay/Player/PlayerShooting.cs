@@ -2,6 +2,7 @@
 using System.Linq;
 using CodeBase.Configs;
 using CodeBase.GamePlay.BulletNameSpace;
+using CodeBase.GamePlay.Enemies;
 using CodeBase.Services.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -84,9 +85,7 @@ namespace CodeBase.GamePlay.Player
             return closestEnemy;
         }
 
-        private void ShootBullet(GameObject closestEnemy)
-        {
+        private void ShootBullet(GameObject closestEnemy) =>
             _gameFactory.CreateBulletWithPool(transform.position, closestEnemy.transform.position - transform.position);
-        }
     }
 }

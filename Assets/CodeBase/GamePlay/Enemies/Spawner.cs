@@ -3,19 +3,20 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Zenject;
 
-public class Spawner : MonoBehaviour
+namespace CodeBase.GamePlay.Enemies
 {
-    private IGameFactory _gameFactory;
-    private ObjectPool<EnemyMovement> _enemies;
-
-    [Inject]
-    private void Construct(IGameFactory gameFactory)
+    public class Spawner : MonoBehaviour
     {
-        _gameFactory = gameFactory;
-    }
+        private IGameFactory _gameFactory;
+        private ObjectPool<EnemyMovement> _enemies;
 
-    public void GetEnemy()
-    {
-        _gameFactory.CreateEnemyWithPool(transform.position);
+        [Inject]
+        private void Construct(IGameFactory gameFactory)
+        {
+            _gameFactory = gameFactory;
+        }
+
+        public void GetEnemy() =>
+            _gameFactory.CreateEnemyWithPool(transform.position);
     }
 }

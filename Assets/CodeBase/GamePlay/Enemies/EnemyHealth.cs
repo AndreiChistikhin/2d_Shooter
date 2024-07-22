@@ -1,11 +1,12 @@
 ﻿using System;
-using CodeBase.GamePlay;
 using UnityEngine;
 
-namespace CodeBase.Enemy
+namespace CodeBase.GamePlay.Enemies
 {
     public class EnemyHealth : MonoBehaviour, IHealth
     {
+        [SerializeField] private EnemyAnimation _enemyAnimation;
+
         public event Action HealthChanged;
 
         public float Current { get; set; }
@@ -15,9 +16,9 @@ namespace CodeBase.Enemy
         public void TakeDamage(float damage)
         {
             Current -= damage;
-            
+            _enemyAnimation.ShowTakenDamage();
+
             HealthChanged?.Invoke();
         }
-
     }
 }

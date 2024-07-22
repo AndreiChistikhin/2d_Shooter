@@ -11,9 +11,7 @@
              _container = container;
          }
  
-         public T CreateState<T>() where T : IGameState
-         {
-             return _container.Instantiate<T>();
-         }
+         public T CreateState<T>() where T : IGameState =>
+             _container.Instantiate<T>();
      }
  }

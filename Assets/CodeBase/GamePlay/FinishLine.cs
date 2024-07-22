@@ -1,27 +1,30 @@
-using CodeBase.GamePlay;
+using CodeBase.GamePlay.Enemies;
 using CodeBase.Services.Interfaces;
 using UnityEngine;
 using Zenject;
 
-public class FinishLine : MonoBehaviour
+namespace CodeBase.GamePlay
 {
-    private IGameFactory _gameFactory;
-    private IHealth _playerHealth;
-
-    [Inject]
-    public void Construct(IGameFactory gameFactory, IHealth playerHealth)
+    public class FinishLine : MonoBehaviour
     {
-        _playerHealth = playerHealth;
-        _gameFactory = gameFactory;
-    }
+        private IGameFactory _gameFactory;
+        private IHealth _playerHealth;
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.TryGetComponent(out EnemyMovement enemyMovement))
+        [Inject]
+        public void Construct(IGameFactory gameFactory, IHealth playerHealth)
         {
-            _playerHealth.TakeDamage(1);
-            enemyMovement.StopMovement();
-            _gameFactory.ReleaseEnemy(enemyMovement.gameObject);
+            _playerHealth = playerHealth;
+            _gameFactory = gameFactory;
+        }
+
+        private void OnTriggerEnter2D(Collider2D col)
+        {
+            if (col.TryGetComponent(out EnemyMovement enemyMovement))
+            {
+                _playerHealth.TakeDamage(1);
+                enemyMovement.StopMovement();
+                _gameFactory.ReleaseEnemy(enemyMovement.gameObject);
+            }
         }
     }
 }

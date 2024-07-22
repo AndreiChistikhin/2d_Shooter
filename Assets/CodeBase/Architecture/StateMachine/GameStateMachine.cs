@@ -9,11 +9,9 @@ namespace CodeBase.Architecture.StateMachine
         private readonly Dictionary<Type, IGameState> _states = new ();
         private IGameState _activeState;
 
-        public void RegisterState<T>(IGameState state) where T : IGameState
-        {
+        public void RegisterState<T>(IGameState state) where T : IGameState =>
             _states[typeof(T)] = state;
-        }
-    
+
         public void Enter<T>() where T : IGameState 
         {
             IGameState state = ChangeState<T>();

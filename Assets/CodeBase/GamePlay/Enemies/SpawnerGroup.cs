@@ -6,52 +6,55 @@ using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-public class SpawnerGroup : MonoBehaviour
+namespace CodeBase.GamePlay.Enemies
 {
-    [SerializeField] private List<Spawner> _spawners;
-
-    private EnemyConfig _enemyStaticData;
-    private float _spawnTimeLeft;
-    private bool _isInitialized;
-
-    [Inject]
-    private async UniTaskVoid Construct(IStaticData staticData)
+    public class SpawnerGroup : MonoBehaviour
     {
-        _enemyStaticData = await staticData.GetEnemyStaticData();
-        
-        SetSpawnTimer();
-        _isInitialized = true;
-    }
+        [SerializeField] private List<Spawner> _spawners;
 
-    private void Update()
-    {
-        if (!_isInitialized)
-            return;
+        private EnemyConfig _enemyStaticData;
+        private float _spawnTimeLeft;
+        private bool _isInitialized;
 
-        if (_spawnTimeLeft > 0)
+        [Inject]
+        private async UniTaskVoid Construct(IStaticData staticData)
         {
-            _spawnTimeLeft -= Time.deltaTime;
-            return;
+            _enemyStaticData = await staticData.GetEnemyStaticData();
+
+            SetSpawnTimer();
+            _isInitialized = true;
         }
 
-        int randomIndex = Random.Range(0, _spawners.Count);
-        _spawners[randomIndex].GetEnemy();
-        SetSpawnTimer();
-    }
+        private void Update()
+        {
+            if (!_isInitialized)
+                return;
 
-    private void SetSpawnTimer()
-    {
-        if (_enemyStaticData.MaxEnemiesSpawnTimeout < _enemyStaticData.MinEnemiesSpawnTimeOut)
-        {
-            Debug.LogError(
-                "Максимальное время спавна врагов меньше минимального времени, поправьте Scriptable object, " +
-                "время спавна приравнвиается к MinEnemiesSpawnTimeOut");
-            _spawnTimeLeft = _enemyStaticData.MinEnemiesSpawnTimeOut;
+            if (_spawnTimeLeft > 0)
+            {
+                _spawnTimeLeft -= Time.deltaTime;
+                return;
+            }
+
+            int randomIndex = Random.Range(0, _spawners.Count);
+            _spawners[randomIndex].GetEnemy();
+            SetSpawnTimer();
         }
-        else
+
+        private void SetSpawnTimer()
         {
-            _spawnTimeLeft = Random.Range(_enemyStaticData.MinEnemiesSpawnTimeOut,
-                _enemyStaticData.MaxEnemiesSpawnTimeout);
+            if (_enemyStaticData.MaxEnemiesSpawnTimeout < _enemyStaticData.MinEnemiesSpawnTimeOut)
+            {
+                Debug.LogError(
+                    "Максимальное время спавна врагов меньше минимального времени, поправьте Scriptable object, " +
+                    "время спавна приравнвиается к MinEnemiesSpawnTimeOut");
+                _spawnTimeLeft = _enemyStaticData.MinEnemiesSpawnTimeOut;
+            }
+            else
+            {
+                _spawnTimeLeft = Random.Range(_enemyStaticData.MinEnemiesSpawnTimeOut,
+                    _enemyStaticData.MaxEnemiesSpawnTimeout);
+            }
         }
     }
 }

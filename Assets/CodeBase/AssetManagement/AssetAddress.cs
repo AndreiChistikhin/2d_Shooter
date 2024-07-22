@@ -14,5 +14,6 @@
         public const string PlayerConfig = "PlayerConfig";
         public const string EnemyConfig = "EnemyConfig";
         public const string WindowConfig = "WindowsConfig";
+        public const string AudioConfig = "AudioConfig";
     }
 }

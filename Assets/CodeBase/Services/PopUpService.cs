@@ -18,15 +18,11 @@ namespace CodeBase.Services
             CreateAllPopUps();
         }
 
-        public void Open(PopUpId popUpId)
-        {
+        public void Open(PopUpId popUpId) =>
             TryToShowPopUp(popUpId);
-        }
 
-        private void CreateAllPopUps()
-        {
+        private void CreateAllPopUps() =>
             _uiFactory.CreateAllPopUps();
-        }
 
         private void TryToShowPopUp(PopUpId popUpId)
         {

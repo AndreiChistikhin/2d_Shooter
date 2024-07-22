@@ -10,17 +10,20 @@ namespace CodeBase.Architecture.StateMachine.GameStates
     public class LevelLoadState : IGameState
     {
         private const string LevelSceneName = "Game";
+
         private readonly ISceneLoader _sceneLoader;
         private readonly IStateMachine _gameStateMachine;
         private readonly IKillsCounter _killsCounter;
         private readonly IGameFactory _factory;
         private readonly IUIFactory _uiFactory;
         private readonly IStaticData _staticData;
+        private readonly AudioService _audioService;
 
         public LevelLoadState(ISceneLoader sceneLoader, IStaticData staticData, IGameFactory factory,
             IUIFactory uiFactory,
-            IStateMachine gameStateMachine, IKillsCounter killsCounter)
+            IStateMachine gameStateMachine, IKillsCounter killsCounter, AudioService audioService)
         {
+            _audioService = audioService;
             _killsCounter = killsCounter;
             _staticData = staticData;
             _sceneLoader = sceneLoader;
@@ -29,28 +32,23 @@ namespace CodeBase.Architecture.StateMachine.GameStates
             _uiFactory = uiFactory;
         }
 
-        public void Enter()
-        {
+        public void Enter() =>
             _sceneLoader.LoadScene(LevelSceneName, OnLoaded);
-        }
 
-        public void Exit()
-        {
+        public void Exit() =>
             _sceneLoader.LoadingCurtain.Hide().Forget();
-        }
 
         private async void OnLoaded()
         {
             await InitUIRoot();
             await InitWorld();
+            await InitAudio();
 
             _gameStateMachine.Enter<GameLoopState>();
         }
 
-        private async UniTask InitUIRoot()
-        {
+        private async UniTask InitUIRoot() =>
             await _uiFactory.CreateUIRoot();
-        }
 
         private async UniTask InitWorld()
         {
@@ -61,6 +59,9 @@ namespace CodeBase.Architecture.StateMachine.GameStates
             await InitKillCounter();
         }
 
+        private async UniTask InitAudio() =>
+            await _audioService.PlayMusic(AudioId.MainMusic, true);
+
         private async UniTask InitPlayer()
         {
             PlayerConfig playerStaticData = await _staticData.GetPlayerStaticData();
@@ -69,10 +70,8 @@ namespace CodeBase.Architecture.StateMachine.GameStates
             playerHealth.Max = playerHealth.Current = playerStaticData.PlayerHealth;
         }
 
-        private async UniTask InitHUD()
-        {
+        private async UniTask InitHUD() =>
             await _factory.CreateHUD();
-        }
 
         private async UniTask InitFinishLine()
         {
@@ -86,9 +85,7 @@ namespace CodeBase.Architecture.StateMachine.GameStates
             await _factory.CreateSpawnerGroup(new Vector3(0, worldStaticData.SpawnerLineYPosition, 0));
         }
 
-        private async UniTask InitKillCounter()
-        {
+        private async UniTask InitKillCounter() =>
             await _killsCounter.ResetCounter();
-        }
     }
 }

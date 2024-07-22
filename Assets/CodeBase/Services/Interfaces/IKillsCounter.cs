@@ -1,6 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 
-namespace CodeBase.Services
+namespace CodeBase.Services.Interfaces
 {
     public interface IKillsCounter
     {

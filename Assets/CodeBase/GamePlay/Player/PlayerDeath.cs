@@ -16,17 +16,11 @@ namespace CodeBase.GamePlay.Player
         private void Construct(IPopUpService popUpService)
         {
             _popUpService = popUpService;
-        }
-
-        private void Start()
-        {
             _health.HealthChanged += HealthChanged;
         }
 
-        private void OnDestroy()
-        {
+        private void OnDestroy() =>
             _health.HealthChanged -= HealthChanged;
-        }
 
         private void HealthChanged()
         {

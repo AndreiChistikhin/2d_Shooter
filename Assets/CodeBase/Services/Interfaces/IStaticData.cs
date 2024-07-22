@@ -9,5 +9,6 @@ namespace CodeBase.Services.Interfaces
         UniTask<EnemyConfig> GetEnemyStaticData();
         UniTask<WorldConfig> GetWorldStaticData();
         UniTask<PopUpParameters> GetPopUpStaticData(PopUpId popUpId);
+        UniTask<AudioParameters> GetAudioStaticData(AudioId audioId);
     }
 }

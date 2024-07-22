@@ -6,46 +6,47 @@ using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-public class EnemyMovement : MonoBehaviour
+namespace CodeBase.GamePlay.Enemies
 {
-    private EnemyConfig _enemyStaticData;
-    private float _enemySpeed;
-
-    [Inject]
-    private async UniTaskVoid Construct(IStaticData staticData)
+    public class EnemyMovement : MonoBehaviour
     {
-        _enemyStaticData = await staticData.GetEnemyStaticData();
-    }
+        [SerializeField] private Rigidbody2D _rb;
 
-    public void Move()
-    {
-        SetSpeed();
-        StartEnemyMovement();
-    }
+        private EnemyConfig _enemyStaticData;
+        private float _enemySpeed;
 
-    public void StopMovement()
-    {
-        transform.DOKill();
-    }
-
-    private void SetSpeed()
-    {
-        if (_enemyStaticData.MaxEnemiesSpeed < _enemyStaticData.MinEnemiesSpeed)
+        [Inject]
+        private async UniTaskVoid Construct(IStaticData staticData)
         {
-            Debug.LogError(
-                "Максимальная скорость врагов меньше минимальной скорости, поправьте Scriptable object, " +
-                "скорость приравнвиается к Min");
-            _enemySpeed = _enemyStaticData.MinEnemiesSpeed;
+            _enemyStaticData = await staticData.GetEnemyStaticData();
         }
-        else
-        {
-            _enemySpeed = Random.Range(_enemyStaticData.MinEnemiesSpeed,
-                _enemyStaticData.MaxEnemiesSpeed);
-        }
-    }
 
-    private void StartEnemyMovement()
-    {
-        transform.DOMoveY(transform.position.y - 1, _enemySpeed).SetLoops(-1,LoopType.Incremental).SetSpeedBased().SetEase(Ease.Linear);
+        public void Move()
+        {
+            SetSpeed();
+            StartEnemyMovement();
+        }
+
+        public void StopMovement() =>
+            _rb.velocity = Vector2.zero;
+
+        private void SetSpeed()
+        {
+            if (_enemyStaticData.MaxEnemiesSpeed < _enemyStaticData.MinEnemiesSpeed)
+            {
+                Debug.LogError(
+                    "Максимальная скорость врагов меньше минимальной скорости, поправьте Scriptable object, " +
+                    "скорость приравнвиается к Min");
+                _enemySpeed = _enemyStaticData.MinEnemiesSpeed;
+            }
+            else
+            {
+                _enemySpeed = Random.Range(_enemyStaticData.MinEnemiesSpeed,
+                    _enemyStaticData.MaxEnemiesSpeed);
+            }
+        }
+
+        private void StartEnemyMovement() =>
+            _rb.velocity = _enemySpeed * Vector2.down;
     }
 }

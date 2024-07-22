@@ -3,6 +3,7 @@ using CodeBase.AssetManagement;
 using CodeBase.Configs;
 using CodeBase.GamePlay;
 using CodeBase.GamePlay.BulletNameSpace;
+using CodeBase.GamePlay.Enemies;
 using CodeBase.GamePlay.Player;
 using CodeBase.Services.Interfaces;
 using Cysharp.Threading.Tasks;
@@ -37,15 +38,17 @@ namespace CodeBase.Services
             InitObjectPools().Forget();
         }
 
-        public void ClearScene()
+        private void ClearScene()
         {
             ClearBindings();
-            
+
+            _enemiesPool.Clear();
+            _bulletsPool.Clear();
+
             foreach (GameObject gameObject in _gameObjectsOnAScene)
             {
                 Object.Destroy(gameObject);
             }
-            
             _gameObjectsOnAScene.Clear();
         }
 
@@ -56,20 +59,14 @@ namespace CodeBase.Services
              return _player;
         }
 
-        public async UniTask<GameObject> CreateHUD()
-        {
-            return await LoadPrefabToScene(AssetAddress.Hud, Vector3.zero);
-        }
+        public async UniTask<GameObject> CreateHUD() =>
+            await LoadPrefabToScene(AssetAddress.Hud, Vector3.zero);
 
-        public async UniTask<GameObject> CreateSpawnerGroup(Vector3 at)
-        {
-            return await LoadPrefabToScene(AssetAddress.SpawnerGroup, at);
-        }
+        public async UniTask<GameObject> CreateSpawnerGroup(Vector3 at) =>
+            await LoadPrefabToScene(AssetAddress.SpawnerGroup, at);
 
-        public async UniTask<GameObject> CreateFinishLine(Vector3 at)
-        {
-            return await LoadPrefabToScene(AssetAddress.FinishLine, at);
-        }
+        public async UniTask<GameObject> CreateFinishLine(Vector3 at) =>
+            await LoadPrefabToScene(AssetAddress.FinishLine, at);
 
         public async UniTaskVoid CreateEnemyWithPool(Vector3 at)
         {
@@ -83,10 +80,8 @@ namespace CodeBase.Services
             enemyHealth.Current = enemyHealth.Max = enemyStaticData.EnemiesHealth;
         }
 
-        public void ReleaseEnemy(GameObject enemy)
-        {
+        public void ReleaseEnemy(GameObject enemy) =>
             _enemiesPool.Release(enemy);
-        }
 
         public async UniTaskVoid CreateBulletWithPool(Vector3 at, Vector3 direction)
         {
@@ -99,17 +94,13 @@ namespace CodeBase.Services
             bullet.StartMovement();
         }
 
-        public void ReleaseBullet(GameObject bullet)
-        {
+        public void ReleaseBullet(GameObject bullet) =>
             _bulletsPool.Release(bullet);
-        }
 
-        private void ClearBindings()
-        {
+        private void ClearBindings() =>
             _diContainer.Unbind<IHealth>();
-        }
 
-        private async UniTaskVoid InitObjectPools()
+        private async UniTask InitObjectPools()
         {
             _enemiesPool = await InitObjectPool(AssetAddress.Enemy);
             _bulletsPool = await InitObjectPool(AssetAddress.Bullet);
@@ -122,7 +113,10 @@ namespace CodeBase.Services
             return new ObjectPool<GameObject>(
                 () => InstantiatePrefab(loadedPrefab, Vector3.zero),
                 t => t.SetActive(true),
-                t => t.SetActive(false));
+                t => t.SetActive(false),
+                Object.Destroy,
+                false,
+                10, 100);
         }
 
         private async UniTask<GameObject> LoadPrefabToScene(string path, Vector3 at)

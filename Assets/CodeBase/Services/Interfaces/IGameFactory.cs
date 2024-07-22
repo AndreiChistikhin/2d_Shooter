@@ -6,7 +6,6 @@ namespace CodeBase.Services.Interfaces
 {
     public interface IGameFactory
     {
-        void ClearScene();
         UniTask<GameObject> CreatePlayer(Vector3 at);
         UniTask<GameObject> CreateHUD();
         UniTask<GameObject> CreateSpawnerGroup(Vector3 at);

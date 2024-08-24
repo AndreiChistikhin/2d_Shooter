@@ -30,6 +30,14 @@ namespace CodeBase.Services
             var handle = Addressables.InstantiateAsync(address);
             return await handle.Task.AsUniTask();
         }
+        
+        public void Cleanup()
+        {
+            foreach (AsyncOperationHandle handle in _cachedAssetRequests.Values)
+                Addressables.Release(handle);
+      
+            _cachedAssetRequests.Clear();
+        }
 
         private async UniTask<T> LoadAsset<T>(AsyncOperationHandle<T> handle, string cacheKey)
             where T : class

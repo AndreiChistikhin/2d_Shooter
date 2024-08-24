@@ -4,7 +4,6 @@ using CodeBase.Configs;
 using CodeBase.GamePlay;
 using CodeBase.GamePlay.BulletNameSpace;
 using CodeBase.GamePlay.Enemies;
-using CodeBase.GamePlay.Player;
 using CodeBase.Services.Interfaces;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -17,7 +16,6 @@ namespace CodeBase.Services
     {
         private readonly IAssetProvider _assetProvider;
         private readonly IStaticData _staticData;
-        private readonly IPopUpService _popUpService;
         private readonly DiContainer _diContainer;
 
         private ObjectPool<GameObject> _enemiesPool;
@@ -25,16 +23,18 @@ namespace CodeBase.Services
 
         private GameObject _player;
         private List<GameObject> _gameObjectsOnAScene = new ();
+        
+        private Transform _rootGameObject;
 
         public GameFactory(DiContainer diContainer, IStaticData staticData,
             IAssetProvider assetProvider, IPopUpService popUpService)
         {
-            _popUpService = popUpService;
             _staticData = staticData;
             _assetProvider = assetProvider;
             _diContainer = diContainer;
 
-            _popUpService.OnPopUp += ClearScene;
+            popUpService.OnPopUp += ClearScene;
+
             InitObjectPools().Forget();
         }
 
@@ -42,31 +42,45 @@ namespace CodeBase.Services
         {
             ClearBindings();
 
-            _enemiesPool.Clear();
-            _bulletsPool.Clear();
+            _enemiesPool?.Clear();
+            _bulletsPool?.Clear();
 
             foreach (GameObject gameObject in _gameObjectsOnAScene)
             {
                 Object.Destroy(gameObject);
             }
             _gameObjectsOnAScene.Clear();
+            
+            _assetProvider.Cleanup();
         }
 
-        public async UniTask<GameObject> CreatePlayer(Vector3 at)
+        public async UniTask<GameObject> CreatePlayer()
         {
-             _player = await LoadPrefabToScene(AssetAddress.Player, at);
-             _diContainer.Bind<IHealth>().To<PlayerHealth>().FromComponentOn(_player).AsTransient();
-             return _player;
+            PlayerConfig playerStaticData = await _staticData.GetPlayerStaticData();
+            
+            _player = await LoadPrefabToScene(AssetAddress.Player, playerStaticData.InitialPlayerPosition);
+            
+            IHealth playerHealth = _player.GetComponent<IHealth>();
+            playerHealth.Max = playerHealth.Current = playerStaticData.PlayerHealth;
+            _diContainer.Bind<IHealth>().FromInstance(playerHealth).AsTransient();
+            
+            return _player;
         }
 
         public async UniTask<GameObject> CreateHUD() =>
             await LoadPrefabToScene(AssetAddress.Hud, Vector3.zero);
 
-        public async UniTask<GameObject> CreateSpawnerGroup(Vector3 at) =>
-            await LoadPrefabToScene(AssetAddress.SpawnerGroup, at);
+        public async UniTask CreateSpawnerGroup()
+        {
+            WorldConfig worldConfig = await _staticData.GetWorldStaticData();
+            await LoadPrefabToScene(AssetAddress.SpawnerGroup, new Vector3(0, worldConfig.SpawnerLineYPosition, 0));
+        }
 
-        public async UniTask<GameObject> CreateFinishLine(Vector3 at) =>
-            await LoadPrefabToScene(AssetAddress.FinishLine, at);
+        public async UniTask CreateFinishLine()
+        {
+            WorldConfig worldConfig = await _staticData.GetWorldStaticData();
+            await LoadPrefabToScene(AssetAddress.FinishLine, new Vector3(0, worldConfig.FinishLineYPosition, 0));
+        }
 
         public async UniTaskVoid CreateEnemyWithPool(Vector3 at)
         {
@@ -96,6 +110,11 @@ namespace CodeBase.Services
 
         public void ReleaseBullet(GameObject bullet) =>
             _bulletsPool.Release(bullet);
+
+        private void CreateGameObjectsRoot()
+        {
+            _rootGameObject = Object.Instantiate(new GameObject("Root")).transform;
+        }
 
         private void ClearBindings() =>
             _diContainer.Unbind<IHealth>();
@@ -127,11 +146,12 @@ namespace CodeBase.Services
 
         private GameObject InstantiatePrefab(GameObject prefab, Vector3 at)
         {
-            GameObject instantiatedGameObject = Object.Instantiate(prefab, at, Quaternion.identity);
-            _diContainer.InjectGameObject(instantiatedGameObject);
-            _gameObjectsOnAScene.Add(instantiatedGameObject);
-            
-            return instantiatedGameObject;
+            if (_rootGameObject == null)
+                CreateGameObjectsRoot();
+
+            GameObject instantiatedPrefab = _diContainer.InstantiatePrefab(prefab, at, Quaternion.identity, _rootGameObject.transform);
+            _gameObjectsOnAScene.Add(instantiatedPrefab);
+            return instantiatedPrefab;
         }
     }
 }

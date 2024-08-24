@@ -6,10 +6,10 @@ namespace CodeBase.Services.Interfaces
 {
     public interface IGameFactory
     {
-        UniTask<GameObject> CreatePlayer(Vector3 at);
+        UniTask<GameObject> CreatePlayer();
         UniTask<GameObject> CreateHUD();
-        UniTask<GameObject> CreateSpawnerGroup(Vector3 at);
-        UniTask<GameObject> CreateFinishLine(Vector3 at);
+        UniTask CreateSpawnerGroup();
+        UniTask CreateFinishLine();
         UniTaskVoid CreateEnemyWithPool(Vector3 at);
         void ReleaseEnemy(GameObject bullet);
         UniTaskVoid CreateBulletWithPool(Vector3 at, Vector3 direction);

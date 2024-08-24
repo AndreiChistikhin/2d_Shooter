@@ -1,6 +1,7 @@
 ﻿using CodeBase.Configs;
 using CodeBase.Services.Interfaces;
 using CodeBase.Utility;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -15,7 +16,7 @@ namespace CodeBase.GamePlay.Player
         private MovementRestriction _movementRestriction;
 
         [Inject]
-        private async void Construct(IStaticData staticData, IInputService inputService)
+        private async UniTaskVoid Construct(IStaticData staticData, IInputService inputService)
         {
             _inputService = inputService;
             _camera = Camera.main;

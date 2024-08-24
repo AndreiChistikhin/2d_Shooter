@@ -21,9 +21,9 @@ namespace CodeBase.GamePlay
         {
             if (col.TryGetComponent(out EnemyMovement enemyMovement))
             {
-                _playerHealth.TakeDamage(1);
-                enemyMovement.StopMovement();
                 _gameFactory.ReleaseEnemy(enemyMovement.gameObject);
+                enemyMovement.StopMovement();
+                _playerHealth.TakeDamage(1);
             }
         }
     }

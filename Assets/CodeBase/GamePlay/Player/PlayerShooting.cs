@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CodeBase.Configs;
-using CodeBase.GamePlay.BulletNameSpace;
 using CodeBase.GamePlay.Enemies;
 using CodeBase.Services.Interfaces;
 using Cysharp.Threading.Tasks;
@@ -78,10 +77,13 @@ namespace CodeBase.GamePlay.Player
 
         private GameObject IdentifyClosestEnemy()
         {
-            List<GameObject> orderedEnemiesByDistance = _shootingTargets
-                .OrderBy(t => (t.transform.position - transform.position).sqrMagnitude).ToList();
-            GameObject closestEnemy = orderedEnemiesByDistance[0];
-            
+            GameObject closestEnemy = _shootingTargets
+                .Aggregate((closest, next) =>
+                    (next.transform.position - transform.position).sqrMagnitude <
+                    (closest.transform.position - transform.position).sqrMagnitude
+                        ? next
+                        : closest);
+
             return closestEnemy;
         }
 

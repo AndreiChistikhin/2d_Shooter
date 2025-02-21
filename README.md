@@ -1,4 +1,4 @@
-![Новый проект](https://github.com/user-attachments/assets/85c44737-5a42-4ff5-911e-348c82f4572f)
+![Uploading Новый-проект (2).gif…]()
 
 This project serves as an example of implementing a service-based architecture in game development
 
